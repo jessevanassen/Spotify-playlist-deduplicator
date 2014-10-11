@@ -7,8 +7,31 @@
 	<link href="lib/bootstrap/bootstrap.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-	<div class="container"></div>
+	<div class="container" ng-controller="Controller">
+		<h1>Spotify playlist deduplicator</h1>
 
-	<script src="lib/angular/angular.js"></script>
+		<div class="checkbox" ng-repeat="playlist in playlists">
+			<label>
+				<input type="checkbox" value="" ng-checked="$index % 2 != 0">
+				{{ playlist }}
+			</label>
+		</div>
+
+		<button class="btn btn-primary">Remove duplicate tracks</button>
+	</div>
+
+	<script type="text/javascript" src="lib/angular/angular.js"></script>
+	<script type="text/javascript">
+		(function() {
+			var module = angular.module("spotify-playlist-deduplicator", []);
+			module.controller("Controller", ["$scope", function($scope) {
+				$scope.playlists = [1,2,3,4,5,6,7,8,9].map(function(i) { return "Playlist " + i; });
+			}]);
+		})();
+
+		function Controller($scope) {
+			console.log($scope);
+		}
+	</script>
 </body>
 </html>
