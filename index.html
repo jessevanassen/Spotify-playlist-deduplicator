@@ -23,11 +23,24 @@
 	<script type="text/javascript" src="lib/angular/angular.js"></script>
 	<script type="text/javascript" src="scripts/app.js"></script>
 	<script type="text/javascript" src="scripts/appSettings.js"></script>
+	<script type="text/javascript" src="scripts/models/Authorization.js"></script>
 	<script type="text/javascript" src="scripts/services/spotifyAPI.js"></script>
 	<script type="text/javascript">
 		(function() {
 			var module = angular.module("spotify-playlist-deduplicator");
-			module.controller("Controller", function($scope, spotifyAPI) {
+			module.controller("Controller", function($scope, $http, spotifyAPI, Authorization) {
+				var match = /#access_token=((?:\w|\-)+)&token_type=(\w+)&expires_in=(\d+)/.exec(window.location.hash);
+				if (match) {
+					var authorization = new Authorization(
+						match[1],
+						match[2],
+						match[3]
+					);
+
+					console.log(authorization);
+				}
+
+
 				$scope.playlists = [1,2,3,4,5,6,7,8,9].map(function(i) { return "Playlist " + i; });
 			});
 		})();
