@@ -21,17 +21,16 @@
 	</div>
 
 	<script type="text/javascript" src="lib/angular/angular.js"></script>
+	<script type="text/javascript" src="scripts/app.js"></script>
+	<script type="text/javascript" src="scripts/appSettings.js"></script>
+	<script type="text/javascript" src="scripts/services/spotifyAPI.js"></script>
 	<script type="text/javascript">
 		(function() {
-			var module = angular.module("spotify-playlist-deduplicator", []);
-			module.controller("Controller", ["$scope", function($scope) {
+			var module = angular.module("spotify-playlist-deduplicator");
+			module.controller("Controller", function($scope, spotifyAPI) {
 				$scope.playlists = [1,2,3,4,5,6,7,8,9].map(function(i) { return "Playlist " + i; });
-			}]);
+			});
 		})();
-
-		function Controller($scope) {
-			console.log($scope);
-		}
 	</script>
 </body>
 </html>
