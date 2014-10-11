@@ -38,6 +38,8 @@
 					);
 
 					console.log(authorization);
+
+					spotifyAPI.loadUserId(authorization).then(function(userId) { console.log(userId); });
 				}
 
 
