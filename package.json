@@ -1,0 +1,10 @@
+{
+	"name": "spotify-playlist-deduplicator",
+	"version": "0.0.1",
+	"devDependencies": {
+		"bower": "*",
+		"grunt": "*",
+		"grunt-bower-task": "*",
+		"grunt-contrib-jshint": "*"
+	}
+}
