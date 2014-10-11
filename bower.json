@@ -1,4 +1,7 @@
 {
 	"name": "spotify-playlist-deduplicator",
-	"dependencies": { }
+	"dependencies": {
+		"angular": "*",
+		"bootstrap": "*"
+	}
 }
