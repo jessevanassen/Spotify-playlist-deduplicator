@@ -2,6 +2,7 @@
 	"name": "spotify-playlist-deduplicator",
 	"dependencies": {
 		"angular": "*",
+		"angular-mocks": "*",
 		"bootstrap": "*"
 	}
 }

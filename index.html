@@ -12,8 +12,8 @@
 
 		<div class="checkbox" ng-repeat="playlist in playlists">
 			<label>
-				<input type="checkbox" value="" ng-checked="$index % 2 != 0">
-				{{ playlist }}
+				<input type="checkbox" ng-value="playlist.id">
+				{{ playlist.name }}
 			</label>
 		</div>
 
@@ -37,13 +37,17 @@
 						match[3]
 					);
 
-					console.log(authorization);
+					console.log(authorization, authorization.isValid());
 
-					spotifyAPI.loadUserId(authorization).then(function(userId) { console.log(userId); });
+					spotifyAPI.loadUserId(authorization).then(function(userId) {
+						return spotifyAPI.loadPlaylists(userId, authorization);
+					}).then(function(playlists) { $scope.playlists = playlists; })
+					.catch(function() { console.log("Error:", arguments[0]); });
+				} else {
+					window.location = "https://accounts.spotify.com/authorize?client_id=368d5edf759e416c89bf60544223292c&redirect_uri=http://localhost:8080/&response_type=token&show_dialog=false&scope=playlist-read-private%20playlist-modify-public%20playlist-modify-private";
 				}
 
-
-				$scope.playlists = [1,2,3,4,5,6,7,8,9].map(function(i) { return "Playlist " + i; });
+				$scope.playlists = [];
 			});
 		})();
 	</script>

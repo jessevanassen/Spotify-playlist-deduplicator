@@ -1,4 +1,6 @@
+.grunt/
 bower_components/
 lib/
 node_modules/
+
 scripts/appSettings.js

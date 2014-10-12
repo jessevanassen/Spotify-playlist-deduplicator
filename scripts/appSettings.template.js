@@ -1,7 +1,7 @@
 (function() {
 	var appSettings = {
-		clientId: ???,
-		redirectUri: ???
+		clientId: "",
+		redirectUri: ""
 	};
 
 	angular.module("spotify-playlist-deduplicator").constant("appSettings", appSettings);

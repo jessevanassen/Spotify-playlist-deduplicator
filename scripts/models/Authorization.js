@@ -7,7 +7,7 @@
 		self.expiresIn = expiresIn;
 
 		self.isValid = (function() {
-			var expiresAt = new Date(new Date().getSeconds() + self.expiresIn);
+			var expiresAt = new Date(new Date().getTime() + self.expiresIn * 1000);
 
 			return function() {
 				return self.accessToken && expiresAt > new Date();
