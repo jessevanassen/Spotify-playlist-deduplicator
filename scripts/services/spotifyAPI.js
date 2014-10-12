@@ -1,9 +1,9 @@
 (function() {
 	function SpotifyAPI($http, $q, appSettings) {
 		var self = this;
-		var API_ENDPOINT = "https://api.spotify.com/v1";
+		self._API_ENDPOINT = "https://api.spotify.com/v1";
 
-		var getHeaders = function(authorization) {
+		self._getHeaders = function(authorization) {
 			var headers = {
 				"Content-Type": "application/json"
 			};
@@ -14,7 +14,7 @@
 			return headers;
 		};
 
-		var loadAll = function(config, authorization) {
+		self._loadAll = function(config, authorization) {
 			var deferred = $q.defer();
 
 			var load = function(config, accumulator) {
@@ -39,11 +39,11 @@
 
 		self.loadUserId = function(authorization) {
 			return $http({
-				url: API_ENDPOINT + "/me",
+				url: self._API_ENDPOINT + "/me",
 				params: {
 					fields: "id"
 				},
-				headers: getHeaders(authorization)
+				headers: self._getHeaders(authorization)
 			})
 				.then(function(result) {
 					return result.data.id;
@@ -51,13 +51,13 @@
 		};
 
 		self.loadPlaylists = function(userId, authorization) {
-			return loadAll({
-				url: API_ENDPOINT + "/users/" + userId + "/playlists",
+			return self._loadAll({
+				url: self._API_ENDPOINT + "/users/" + userId + "/playlists",
 				params: {
 					fields: ["next", "items.id", "items.name", "items.owner.id", "items.uri"].join(","),
 					limit: 50
 				},
-				headers: getHeaders(authorization)
+				headers: self._getHeaders(authorization)
 			})
 				.then(function(data) {
 					return {
@@ -78,19 +78,19 @@
 
 		self.loadTracksInPlaylist = function(userId, playlistId, authorization) {
 			var snapshotId = $http({
-				url: API_ENDPOINT + "/users/" + userId + "/playlists/" + playlistId,
+				url: self._API_ENDPOINT + "/users/" + userId + "/playlists/" + playlistId,
 				params: {
 					fields: "snapshot_id"
 				},
-				headers: getHeaders(authorization)
+				headers: self._getHeaders(authorization)
 			});
-			var tracks = loadAll({
-				url: API_ENDPOINT + "/users/" + userId + "/playlists/" + playlistId + "/tracks",
+			var tracks = self._loadAll({
+				url: self._API_ENDPOINT + "/users/" + userId + "/playlists/" + playlistId + "/tracks",
 				params: {
 					fields: ["next", "items.track.id", "items.track.uri"].join(","),
 					limit: 100
 				},
-				headers: getHeaders(authorization)
+				headers: self._getHeaders(authorization)
 			});
 
 			return $q.all([snapshotId, tracks])
