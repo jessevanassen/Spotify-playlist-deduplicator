@@ -28,7 +28,7 @@
 	<script type="text/javascript">
 		(function() {
 			var module = angular.module("spotify-playlist-deduplicator");
-			module.controller("Controller", function($scope, $http, spotifyAPI, Authorization) {
+			module.controller("Controller", function($scope, $http, spotifyAPI, appSettings, Authorization) {
 				var match = /#access_token=((?:\w|\-)+)&token_type=(\w+)&expires_in=(\d+)/.exec(window.location.hash);
 				if (match) {
 					var authorization = new Authorization(
@@ -37,26 +37,24 @@
 						match[3]
 					);
 
-					console.log(authorization, authorization.isValid());
-
 					var userId;
 					spotifyAPI.loadUserId(authorization)
 						.then(function(userId_) {
 							userId = userId_;
 							return spotifyAPI.loadPlaylists(userId, authorization);
 						})
-						.then(function(playlists) {
-							$scope.playlists = playlists;
-							return spotifyAPI.loadTracksInPlaylist(userId, playlists[0].id, authorization);;
+						.then(function(data) {
+							$scope.playlists = data.items;
+							return spotifyAPI.loadTracksInPlaylist(userId, data.items[0].id, authorization);;
 						})
-						.then(function(tracks) {
-							console.log(tracks.map(function(a) { return a.id; }));
+						.then(function(data) {
+							console.log(data);
 						})
 						.catch(function(reason) {
 							console.log("Error", reason);
 						});
 				} else {
-					window.location = "https://accounts.spotify.com/authorize?client_id=368d5edf759e416c89bf60544223292c&redirect_uri=http://localhost:8080/&response_type=token&show_dialog=false&scope=playlist-read-private%20playlist-modify-public%20playlist-modify-private";
+					window.location = "https://accounts.spotify.com/authorize?client_id=" + appSettings.clientId + "&redirect_uri=" + appSettings.redirectUri + "&response_type=token&show_dialog=false&scope=" + ["playlist-read-private", "playlist-modify-public", "playlist-modify-private"].join("%20");
 				}
 
 				$scope.playlists = [];
