@@ -34,13 +34,25 @@
 		};
 
 		self.loadUserId = function(authorization) {
-			return $http.get(API_ENDPOINT + "/me", getHeaders(authorization)).then(function(result) { return result.data.id; });
+			return $http.get(API_ENDPOINT + "/me", getHeaders(authorization))
+				.then(function(result) { return result.data.id; });
 		};
 
 		self.loadPlaylists = function(userId, authorization) {
-			return loadAll(API_ENDPOINT + "/users/" + userId + "/playlists?offset=0&limit=50", authorization).then(function(data) {
-				return data.map(function(playlist) { return { id: playlist.id, name: playlist.name }; });
-			});
+			return loadAll(API_ENDPOINT + "/users/" + userId + "/playlists?limit=50", authorization)
+				.then(function(data) {
+					return data.map(function(playlist) { return { id: playlist.id, name: playlist.name }; });
+				});
+		};
+
+		self.loadTracksInPlaylist = function(userId, playlistId, authorization) {
+			return loadAll(API_ENDPOINT + "/users/" + userId + "/playlists/" + playlistId + "/tracks?limit=100", authorization)
+				.then(function(data) {
+					return data.map(function(playlistItem) {
+						console.log(arguments);
+						return { id: playlistItem.track.id };
+					});
+				});
 		};
 	}
 

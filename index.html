@@ -39,10 +39,22 @@
 
 					console.log(authorization, authorization.isValid());
 
-					spotifyAPI.loadUserId(authorization).then(function(userId) {
-						return spotifyAPI.loadPlaylists(userId, authorization);
-					}).then(function(playlists) { $scope.playlists = playlists; })
-					.catch(function() { console.log("Error:", arguments[0]); });
+					var userId;
+					spotifyAPI.loadUserId(authorization)
+						.then(function(userId_) {
+							userId = userId_;
+							return spotifyAPI.loadPlaylists(userId, authorization);
+						})
+						.then(function(playlists) {
+							$scope.playlists = playlists;
+							return spotifyAPI.loadTracksInPlaylist(userId, playlists[0].id, authorization);;
+						})
+						.then(function(tracks) {
+							console.log(tracks.map(function(a) { return a.id; }));
+						})
+						.catch(function(reason) {
+							console.log("Error", reason);
+						});
 				} else {
 					window.location = "https://accounts.spotify.com/authorize?client_id=368d5edf759e416c89bf60544223292c&redirect_uri=http://localhost:8080/&response_type=token&show_dialog=false&scope=playlist-read-private%20playlist-modify-public%20playlist-modify-private";
 				}
