@@ -12,8 +12,8 @@
 
 		<div class="checkbox" ng-repeat="playlist in playlists">
 			<label>
-				<input type="checkbox" ng-value="playlist.id">
-				{{ playlist.name }}
+				<input type="checkbox" ng-value="playlist.getId()">
+				{{ playlist.getName() }}
 			</label>
 		</div>
 
@@ -24,14 +24,16 @@
 	<script type="text/javascript" src="scripts/app.js"></script>
 	<script type="text/javascript" src="scripts/appSettings.js"></script>
 	<script type="text/javascript" src="scripts/models/Authorization.js"></script>
+	<script type="text/javascript" src="scripts/models/Playlist.js"></script>
+	<script type="text/javascript" src="scripts/models/Track.js"></script>
 	<script type="text/javascript" src="scripts/services/spotifyAPI.js"></script>
 	<script type="text/javascript">
 		(function() {
 			var module = angular.module("spotify-playlist-deduplicator");
-			module.controller("Controller", function($scope, $http, spotifyAPI, appSettings, Authorization) {
+			module.controller("Controller", function($scope, $http, spotifyAPI, appSettings) {
 				var match = /#access_token=((?:\w|\-)+)&token_type=(\w+)&expires_in=(\d+)/.exec(window.location.hash);
 				if (match) {
-					var authorization = new Authorization(
+					var authorization = new models.Authorization(
 						match[1],
 						match[2],
 						match[3]
@@ -45,7 +47,7 @@
 						})
 						.then(function(data) {
 							$scope.playlists = data.items;
-							return spotifyAPI.loadTracksInPlaylist(userId, data.items[0].id, authorization);;
+							return spotifyAPI.loadTracksInPlaylist(userId, data.items[0].getId(), authorization);;
 						})
 						.then(function(data) {
 							console.log(data);

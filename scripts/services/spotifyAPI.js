@@ -66,11 +66,10 @@
 								return playlist.owner.id == userId;
 							})
 							.map(function(playlist) {
-								return {
-									id: playlist.id,
-									name: playlist.name,
-									uri: playlist.uri
-								};
+								return new models.Playlist(
+									playlist.id,
+									playlist.name
+								);
 							})
 					};
 				});
@@ -99,10 +98,7 @@
 						snapshotId: allData[0].data.snapshot_id,
 						items: allData[1]
 							.map(function(playlistItem) {
-								return {
-									id: playlistItem.track.id,
-									uri: playlistItem.track.uri
-								};
+								return new models.Track(playlistItem.track.id);
 							})
 					};
 				});
