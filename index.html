@@ -31,6 +31,8 @@
 		(function() {
 			var module = angular.module("spotify-playlist-deduplicator");
 			module.controller("Controller", function($scope, $http, spotifyAPI, appSettings) {
+				window.spotifyAPI = spotifyAPI;
+
 				var match = /#access_token=((?:\w|\-)+)&token_type=(\w+)&expires_in=(\d+)/.exec(window.location.hash);
 				if (match) {
 					var authorization = new models.Authorization(
@@ -47,10 +49,12 @@
 						})
 						.then(function(data) {
 							$scope.playlists = data.items;
-							return spotifyAPI.loadTracksInPlaylist(userId, data.items[0].getId(), authorization);;
-						})
-						.then(function(data) {
-							console.log(data);
+							data.items.forEach(function(playlist) {
+								spotifyAPI.removeDuplicateTracksInPlaylist(userId, playlist.getId(), authorization)
+									.then(function(result) {
+										console.log(playlist.getName(), JSON.stringify(result));
+									});
+							});
 						})
 						.catch(function(reason) {
 							console.log("Error", reason);

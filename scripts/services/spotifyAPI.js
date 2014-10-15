@@ -110,7 +110,7 @@
 				});
 		};
 
-		self.findDuplicateTracks = function(tracks) {
+		self._findDuplicateTracks = function(tracks) {
 			var occurrences = tracks.reduce(function(accumulator, item, index) {
 				if (accumulator[item])
 					accumulator[item].index.push(index);
@@ -119,12 +119,26 @@
 				return accumulator;
 			}, {});
 			return Object.keys(occurrences)
-				.reduce(function(accumulator, id) {
-					if (occurrences[id].index.length > 1)
-						accumulator.push(occurrences[id]);
-					return accumulator;
-				}, []);
-		}
+				.filter(function(id) { return occurrences[id].index.length > 1; })
+				.map(function(id) { return occurrences[id]; });
+		};
+
+		self.removeDuplicateTracksInPlaylist = function(userId, playlistId, authorization) {
+			return self.loadTracksInPlaylist(userId, playlistId, authorization)
+				.then(function(data) {
+					var duplicates = self._findDuplicateTracks(data.items);
+					var payload = {
+						snapshot_id: data.snapshotId,
+						tracks: duplicates.map(function(duplicate) {
+							return {
+								uri: duplicate.track.getUri(),
+								positions: duplicate.index.slice(1)
+							};
+						})
+					};
+					return payload;
+				});
+		};
 	}
 
 	angular.module("spotify-playlist-deduplicator").service("spotifyAPI", SpotifyAPI);
