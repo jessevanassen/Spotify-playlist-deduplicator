@@ -94,11 +94,17 @@
 
 			return $q.all([snapshotId, tracks])
 				.then(function(allData) {
+					var tracks = allData[1].reduce(function(accumulator, playlistItem) {
+						if (!accumulator[playlistItem.track.id])
+							accumulator[playlistItem.track.id] = new models.Track(playlistItem.track.id);
+						return accumulator;
+					}, {});
+
 					return {
 						snapshotId: allData[0].data.snapshot_id,
 						items: allData[1]
 							.map(function(playlistItem) {
-								return new models.Track(playlistItem.track.id);
+								return tracks[playlistItem.track.id];
 							})
 					};
 				});
