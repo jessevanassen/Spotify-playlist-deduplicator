@@ -3,4 +3,5 @@ models.Track = function(id) {
 
 	self.getId = function() { return id; };
 	self.getUri = function() { return "spotify:track:" + id; };
+	self.toString = self.getUri;
 };

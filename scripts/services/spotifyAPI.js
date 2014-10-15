@@ -109,6 +109,22 @@
 					};
 				});
 		};
+
+		self.findDuplicateTracks = function(tracks) {
+			var occurrences = tracks.reduce(function(accumulator, item, index) {
+				if (accumulator[item])
+					accumulator[item].index.push(index);
+				else
+					accumulator[item] = { track: item, index: [index] };
+				return accumulator;
+			}, {});
+			return Object.keys(occurrences)
+				.reduce(function(accumulator, id) {
+					if (occurrences[id].index.length > 1)
+						accumulator.push(occurrences[id]);
+					return accumulator;
+				}, []);
+		}
 	}
 
 	angular.module("spotify-playlist-deduplicator").service("spotifyAPI", SpotifyAPI);
