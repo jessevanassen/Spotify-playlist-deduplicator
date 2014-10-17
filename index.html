@@ -17,7 +17,7 @@
 			</label>
 		</div>
 
-		<button class="btn btn-primary" ng-click="removeDuplicates()" ng-disabled="busy">Remove duplicate tracks</button>
+		<button class="btn btn-primary" ng-click="removeDuplicates()" ng-disabled="busy || !hasCheckedPlaylists()">Remove duplicate tracks</button>
 	</div>
 
 	<script type="text/javascript" src="lib/angular/angular.js"></script>
@@ -73,6 +73,7 @@
 				}
 
 				$scope.busy = true;
+				$scope.playlists = [];
 
 				var authorization = authorize();
 				var userId;
@@ -92,6 +93,12 @@
 						console.log("Error", reason);
 					});
 
+				$scope.hasCheckedPlaylists = function() {
+					return $scope.playlists.some(function(item) {
+						return item.checked === true;
+					});
+				};
+
 				$scope.removeDuplicates = function() {
 					$scope.busy = true;
 					removeDuplicatesFromPlaylists(getCheckedItems($scope.playlists))
@@ -101,7 +108,7 @@
 						.finally(function() {
 							$scope.busy = false;
 						});
-				}
+				};
 			});
 		})();
 	</script>
