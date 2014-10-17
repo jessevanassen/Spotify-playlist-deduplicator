@@ -31,7 +31,7 @@
 		(function() {
 			var module = angular.module("spotify-playlist-deduplicator");
 			module.controller("Controller", function($scope, $http, $q, spotifyAPI, appSettings) {
-				function authorize() {
+				function getAuthorization() {
 					var match = /#access_token=((?:\w|\-)+)&token_type=(\w+)&expires_in=(\d+)/.exec(window.location.hash);
 					if (match)
 						return new models.Authorization(
@@ -40,7 +40,11 @@
 							match[3]
 						);
 					else
-						window.location = "https://accounts.spotify.com/authorize?client_id=" + appSettings.clientId + "&redirect_uri=" + appSettings.redirectUri + "&response_type=token&show_dialog=false&scope=" + ["playlist-read-private", "playlist-modify-public", "playlist-modify-private"].join("%20");
+						return models.Authorization.createUnauthorized();
+				}
+
+				function authorize() {
+					window.location = "https://accounts.spotify.com/authorize?client_id=" + appSettings.clientId + "&redirect_uri=" + appSettings.redirectUri + "&response_type=token&show_dialog=false&scope=" + ["playlist-read-private", "playlist-modify-public", "playlist-modify-private"].join("%20");
 				}
 
 				function createCheckedList(list) {
@@ -75,9 +79,12 @@
 				$scope.busy = true;
 				$scope.playlists = [];
 
-				var authorization = authorize();
 				var userId;
 				var playlists;
+
+				var authorization = getAuthorization();
+				if(!authorization.isValid())
+					authorize();
 
 				spotifyAPI.loadUserId(authorization)
 					.then(function(userId_) {
@@ -90,7 +97,9 @@
 						$scope.busy = false;
 					})
 					.catch(function(reason) {
-						console.log("Error", reason);
+						if (reason.status === 401) {
+							authorize();
+						}
 					});
 
 				$scope.hasCheckedPlaylists = function() {
@@ -104,6 +113,11 @@
 					removeDuplicatesFromPlaylists(getCheckedItems($scope.playlists))
 						.then(function(data) {
 							console.log(data);
+						})
+						.catch(function(reason) {
+							if (reason.status === 401) {
+								authorize();
+							}
 						})
 						.finally(function() {
 							$scope.busy = false;
