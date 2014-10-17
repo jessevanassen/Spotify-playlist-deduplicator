@@ -24,6 +24,7 @@
 						if (result.data.next) {
 							load({
 								url: result.data.next,
+								method: "GET",
 								headers: config.headers
 							}, accumulator);
 						} else {
@@ -43,6 +44,7 @@
 				params: {
 					fields: "id"
 				},
+				method: "GET",
 				headers: self._getHeaders(authorization)
 			})
 				.then(function(result) {
@@ -81,6 +83,7 @@
 				params: {
 					fields: "snapshot_id"
 				},
+				method: "GET",
 				headers: self._getHeaders(authorization)
 			});
 			var tracks = self._loadAll({
@@ -127,7 +130,10 @@
 			return self.loadTracksInPlaylist(userId, playlistId, authorization)
 				.then(function(data) {
 					var duplicates = self._findDuplicateTracks(data.items);
-					var payload = {
+					if (duplicates.length === 0)
+						return undefined;
+
+					var requestData = {
 						snapshot_id: data.snapshotId,
 						tracks: duplicates.map(function(duplicate) {
 							return {
@@ -136,7 +142,12 @@
 							};
 						})
 					};
-					return payload;
+					return $http({
+						url: self._API_ENDPOINT + "/users/" + userId + "/playlists/" + playlistId + "/tracks",
+						data: requestData,
+						method: "DELETE",
+						headers: self._getHeaders(authorization)
+					});
 				});
 		};
 	}
