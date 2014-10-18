@@ -73,7 +73,12 @@
 
 					return $q.all(
 						playlists.map(removeDuplicateFromPlaylist)
-					);
+					)
+					.then(function(data) {
+						return playlists.filter(function(_, i) {
+							return data[i] === true;
+						});
+					});
 				}
 
 				$scope.busy = true;
@@ -112,7 +117,14 @@
 					$scope.busy = true;
 					removeDuplicatesFromPlaylists(getCheckedItems($scope.playlists))
 						.then(function(data) {
-							console.log(data);
+							if (data.length > 0) {
+								console.log("Duplicate tracks removed from:\r\n" +
+									data.map(function(playlist) { return " - " + playlist.getName(); })
+										.join("\r\n")
+								);
+							} else {
+								console.log("No duplicate tracks removed.");
+							}
 						})
 						.catch(function(reason) {
 							if (reason.status === 401) {

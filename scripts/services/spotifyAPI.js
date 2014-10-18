@@ -131,7 +131,7 @@
 				.then(function(data) {
 					var duplicates = self._findDuplicateTracks(data.items);
 					if (duplicates.length === 0)
-						return undefined;
+						return $q.when(false);
 
 					var requestData = {
 						snapshot_id: data.snapshotId,
@@ -147,7 +147,8 @@
 						data: requestData,
 						method: "DELETE",
 						headers: self._getHeaders(authorization)
-					});
+					})
+					.then(function() { return true; });
 				});
 		};
 	}
