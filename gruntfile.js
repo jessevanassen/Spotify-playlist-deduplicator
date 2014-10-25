@@ -2,8 +2,9 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
 		bower: {
-			install: {
-				"angular": "*"
+			install: { },
+			options: {
+				copy: false
 			}
 		},
 		jshint: {
@@ -11,8 +12,8 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-bower-task");
+	grunt.loadNpmTasks("grunt-contrib-jshint");
 
 	grunt.registerTask("default", ["bower", "jshint"]);
 	grunt.registerTask("build", ["jshint"]);

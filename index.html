@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Spotify playlist deduplicator</title>
-	<link href="lib/bootstrap/bootstrap.css" type="text/css" rel="stylesheet" />
+	<link href="lib/bootstrap/dist/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 	<div class="container" ng-controller="Controller">
@@ -20,7 +20,7 @@
 		<button class="btn btn-primary" ng-click="removeDuplicates()" ng-disabled="busy || !hasCheckedPlaylists()">Remove duplicate tracks</button>
 	</div>
 
-	<script type="text/javascript" src="lib/angular/angular.js"></script>
+	<script type="text/javascript" src="lib/angular/angular.min.js"></script>
 	<script type="text/javascript" src="scripts/app.js"></script>
 	<script type="text/javascript" src="scripts/appSettings.js"></script>
 	<script type="text/javascript" src="scripts/models/Authorization.js"></script>
