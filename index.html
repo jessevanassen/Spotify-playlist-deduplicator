@@ -5,6 +5,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Spotify playlist deduplicator</title>
 	<link href="lib/bootstrap/dist/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+	<style type="text/css">
+		.alerts {
+			margin-top: 2em;
+		}
+
+		.alert {
+			margin-bottom: 1em;
+		}
+	</style>
 </head>
 <body>
 	<div class="container" ng-controller="Controller">
@@ -18,6 +27,18 @@
 		</div>
 
 		<button class="btn btn-primary" ng-click="removeDuplicates()" ng-disabled="busy || !hasCheckedPlaylists()">Remove duplicate tracks</button>
+
+		<div class="alerts">
+			<div ng-repeat="notification in notifications">
+				<div ng-if="notification.template === 'duplicate_tracks_removed'" class="alert alert-success">
+					Duplicate tracks are removed from the following playlists:
+					<ul>
+						<li ng-repeat="playlist in notification.playlists">{{ playlist }}</li>
+					</ul>
+				</div>
+				<div ng-if="notification.template === 'no_tracks_removed'" class="alert alert-info">No duplicate tracks removed.</div>
+			</div>
+		</div>
 	</div>
 
 	<script type="text/javascript" src="lib/angular/angular.min.js"></script>
@@ -83,6 +104,7 @@
 
 				$scope.busy = true;
 				$scope.playlists = [];
+				$scope.notifications = [];
 
 				var userId;
 				var playlists;
@@ -118,12 +140,12 @@
 					removeDuplicatesFromPlaylists(getCheckedItems($scope.playlists))
 						.then(function(data) {
 							if (data.length > 0) {
-								console.log("Duplicate tracks removed from:\r\n" +
-									data.map(function(playlist) { return " - " + playlist.getName(); })
-										.join("\r\n")
-								);
+								$scope.notifications.unshift({
+									template: "duplicate_tracks_removed",
+									playlists: data.map(function(playlist) { return playlist.getName(); })
+								});
 							} else {
-								console.log("No duplicate tracks removed.");
+								$scope.notifications.unshift({ template: "no_tracks_removed" });
 							}
 						})
 						.catch(function(reason) {
